@@ -105,7 +105,7 @@ static int __init connectal_init(void)
 	unsigned int i;
 	int ret;
 	const char *ids[] = {
-	  "disk", 0
+	  "disk", "bcd", 0
 	};
 
 	dev_set_name(&bus.dev, connectal_bus_type.name);
