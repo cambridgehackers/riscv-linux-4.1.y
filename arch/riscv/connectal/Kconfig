@@ -1,0 +1,33 @@
+menuconfig CONNECTAL
+	bool "CONNECTAL"
+	depends on 64BIT
+	default y
+	help
+	  Host-Target Interface
+
+if CONNECTAL
+
+config CONNECTAL_CONSOLE
+	tristate "CONNECTAL console support"
+	select TTY
+	default y
+
+config CONNECTAL_CONSOLE_PORTS
+	int "Maximum number of CONNECTAL console ports"
+	depends on CONNECTAL_CONSOLE
+	default 1
+
+config CONNECTAL_BLOCK
+	tristate "CONNECTAL block device support"
+	select BLOCK
+	default y
+
+config CONNECTAL_RFB
+	tristate "CONNECTAL remote framebuffer support"
+	select FB
+	select FB_CFB_FILLRECT
+	select FB_CFB_COPYAREA
+	select FB_CFB_IMAGEBLIT
+	default n
+
+endif # CONNECTAL

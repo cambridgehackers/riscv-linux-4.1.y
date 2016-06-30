@@ -130,6 +130,7 @@ config RV_SYSRISCV_ATOMIC
 	  If CONFIG_RV_ATOMIC is unset, this option is mandatory.
 
 source "arch/riscv/htif/Kconfig"
+source "arch/riscv/connectal/Kconfig"
 
 endmenu
 
