@@ -1,6 +1,6 @@
 ifeq ($(CONFIG_OF),y)
 
-dtb-y += riscv64-spike.dtb
+dtb-y += riscv64-spike.dtb riscv64-riscy.dtb
 
 endif
 
