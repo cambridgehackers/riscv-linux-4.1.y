@@ -26,6 +26,7 @@ static int connectal_bus_match(struct device *dev, struct device_driver *drv)
 	id = to_connectal_dev(dev)->id;
 	s = strnchr(id, CONNECTAL_MAX_ID, ' ');
 	n = (s != NULL) ? (s - id) : CONNECTAL_MAX_ID;
+	printk("%s id=%s type=%s\n", __FUNCTION__, id, to_connectal_driver(drv)->type);
 	return !strncmp(id, to_connectal_driver(drv)->type, n);
 }
 

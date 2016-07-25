@@ -8,7 +8,10 @@
 #include <linux/module.h>
 
 #include <asm/connectal.h>
+#include "generated/portal.h"
+#include "generated/GeneratedTypes.h"
 
+static int blk_verbose = 0;
 #define DRIVER_NAME "connectalblk"
 
 #define SECTOR_SIZE_SHIFT	(9)
@@ -41,8 +44,9 @@ static int connectalblk_segment(struct connectalblk_device *dev,
 	u64 offset, size, end;
 	int err = 0;
 	int i;
+	PortalInternal *pint = 0;
 
-	printk("%s:%d\n", __FUNCTION__, __LINE__);
+	if (blk_verbose) printk("%s:%d rq_data_dir %d READ %d\n", __FUNCTION__, __LINE__, rq_data_dir(req), READ);
 	offset = (blk_rq_pos(req) << SECTOR_SIZE_SHIFT);
 	size = (blk_rq_cur_sectors(req) << SECTOR_SIZE_SHIFT);
 
@@ -61,20 +65,27 @@ static int connectalblk_segment(struct connectalblk_device *dev,
 
 	dev->req = req;
 	//FIXME use generated code
+#if 0
 	while (dev->req_regs[9] == 0)
 		/* wait for not full */;
-	dev->req_regs[8] = rq_data_dir(req) == READ ? 0 : 1;
+	
+	dev->req_regs[8] = ((rq_data_dir(req) == READ) ? 0 : 1);
 	dev->req_regs[8] = pkt.addr;
 	dev->req_regs[8] = offset;
 	dev->req_regs[8] = size;
 	dev->req_regs[8] = dev->tag;
+#else
+	BlockDevRequest_transfer(pint, ((rq_data_dir(req) == READ) ? 0 : 1), pkt.addr, offset, size, dev->tag);
+#endif
+
 	for (i = 0; i < 10; i++) {
 		int notEmpty = dev->resp_regs[9];
 		if (notEmpty)
 			break;
 	}
 
-	printk("sent blockdev request resp.notEmpty=%x tag=%x\n", dev->resp_regs[9], dev->resp_regs[8]);
+	//if (blk_verbose) printk("sent blockdev request resp.notEmpty=%x tag=%x\n", dev->resp_regs[9], dev->resp_regs[8]);
+	if (blk_verbose) printk("sent blockdev request resp.notEmpty=%x\n", dev->resp_regs[9]);
 
 	wmb();
 	WARN_ON(__blk_end_request_cur(dev->req, err));
